@@ -50,8 +50,8 @@ public class SegmentLengthAnalyze {
 
     private static double[] parseCoordinates(String part) {
         String[] textToComment = part.split("//");
-        String cleanedPart = textToComment[0].replaceAll("[^0-9,]", "");
-        String[] coordinateStrings = cleanedPart.split(",");
+        String cleanDigits = textToComment[0].replaceAll("[^0-9,]", "");
+        String[] coordinateStrings = cleanDigits.split(",");
         if(coordinateStrings.length != 2){
             throw new IllegalArgumentException("Некорректный набор значений строки");
         }
