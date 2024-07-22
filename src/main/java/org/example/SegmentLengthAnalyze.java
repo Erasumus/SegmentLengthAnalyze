@@ -9,17 +9,16 @@ public class SegmentLengthAnalyze {
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.##");
 
     public static void main(String[] args) {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(
-                Objects.requireNonNull(SegmentLengthAnalyze.class.getResourceAsStream("/data.txt"))))) {
-
-            double maxLength = reader.lines()
+        try(BufferedReader reader = new BufferedReader(new InputStreamReader(
+                Objects.requireNonNull(SegmentLengthAnalyze.class.getResourceAsStream("/data.txt"))
+        ))){
+            Double maxLength = reader.lines()
                     .mapToDouble(SegmentLengthAnalyze::calculateSegmentLength)
                     .max()
-                    .orElse(0.0);
-
-            System.out.println("\nМаксимальная длина: " + DECIMAL_FORMAT.format(maxLength));
-        } catch (Exception e) {
-            e.printStackTrace();
+                    .orElse(0);
+            System.out.println("\n Максимальная длина: " + DECIMAL_FORMAT.format(maxLength));
+        } catch (Exception e){
+            throw new IllegalArgumentException("Некорректный набор строк");
         }
     }
 
@@ -27,7 +26,7 @@ public class SegmentLengthAnalyze {
         try {
             String[] parts = line.split("\\)-\\(");
             if (parts.length != 2) {
-                throw new IllegalArgumentException("Некорректный формат строки: " + line);
+                throw new IllegalArgumentException("Некорректная строка: " + line);
             }
 
             double[] startCoordinates = parseCoordinates(parts[0]);
@@ -42,18 +41,19 @@ public class SegmentLengthAnalyze {
             System.out.printf("x1:%s, y1:%s-x2:%s, y2:%s, \nДлина: %s%n",
                     x1, y1, x2, y2, DECIMAL_FORMAT.format(length));
             return length;
-        } catch (Exception e) {
-            System.err.println("Ошибка обработки строки: " + line);
+        } catch (Exception e){
+            System.err.println("Неверная строчка: " + line);
             e.printStackTrace();
-            return 0.0; // Возвращаем 0 в случае ошибки
+            return 0.0;
         }
     }
 
     private static double[] parseCoordinates(String part) {
-        String cleanedPart = part.replaceAll("[^0-9,]", "");
+        String[] textToComment = part.split("//");
+        String cleanedPart = textToComment[0].replaceAll("[^0-9,]", "");
         String[] coordinateStrings = cleanedPart.split(",");
-        if (coordinateStrings.length != 2) {
-            throw new IllegalArgumentException("Некорректный формат координат: " + part);
+        if(coordinateStrings.length != 2){
+            throw new IllegalArgumentException("Некорректный набор значений строки");
         }
         return new double[]{
                 Double.parseDouble(coordinateStrings[0]),
